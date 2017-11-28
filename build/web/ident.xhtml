@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <meta charset="utf-8"/>
+        <h:outputStylesheet library = "css" name = "ident.css"/>
+        
+        <!-- JQuery -->
+        <h:outputScript library="js" name="jquery-3.2.1.js" />
+
+        <!-- Bootstrap -->
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <h:outputStylesheet library="css" name="bootstrap/bootstrap.css"/>
+        <h:outputScript library="js" name="bootstrap/bootstrap.js" />
+
+        <title>Page d'identification</title>
+    </h:head>
+    <h:body class="text-center">
+        <div>
+            <h:form>
+                <br/><br/>
+                Nom d'utilisateur :
+                <br/>
+                <h:inputText  id="Utilisateur" value="#{authentifier.utilisateur}" 
+                    required="true" requiredMessage="Utilisateur invalide."/>
+                <br/>
+                <h:message for="Utilisateur" warnClass="alert-warning" errorClass="alert-danger"/>
+                <br/>
+                Mot de passe :
+                <br/>
+                <h:inputSecret id="MotDePasse" value="#{authentifier.motDePasse}"
+                    required="true" requiredMessage="Mot de passe invalide."/>
+                <br/>
+                <h:message for="MotDePasse" warnClass="alert-warning" errorClass="alert-danger"/>
+                <br/><br/>
+                <h:commandButton id="btnIdentifier" value="S'identifier" 
+                    action="#{authentifier.Verifier()}"/>
+                <br/>
+                <div class="alert-danger">
+                    <h:outputText value="#{authentifier.message}"/>
+                </div>
+                <br/><br/>
+                <h:link outcome="inscription" class="btn btn-dark small" value="Inscription"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>

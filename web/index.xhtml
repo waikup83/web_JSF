@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <meta charset="utf-8"/>
+        <h:outputStylesheet library = "css" name = "index.css"/>
+
+        <!-- JQuery -->
+        <h:outputScript library="js" name="jquery-3.2.1.js" />
+
+        <!-- Bootstrap -->
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <h:outputStylesheet library="css" name="bootstrap/bootstrap.css"/>
+        <h:outputScript library="js" name="bootstrap/bootstrap.js" />
+        
+        <title>Bienvenue</title>
+    </h:head>
+    <h:body>
+        <h:form>
+        <nav class="nav navbar navbar-inverse container-fluid">
+            <ul class="btn-group navbar-nav d-inline row">
+                <c:if test="#{authentifier.utilisateur != ''}">
+                    <h:link outcome="ajouter">
+                        <li class="btn btn-success col-sm-auto">
+                            Ajouter une image
+                        </li>
+                    </h:link>
+                </c:if>
+                <c:if test="#{bd.image.get('ID_Util') == authentifier.id_utilisateur || authentifier.type == 'A'}">
+                        <h:commandLink action="#{ajouterFichier.EnleverPhoto(bd)}">
+                            <li class="btn btn-danger col-sm-auto">                            
+                                Supprimer l'image
+                            </li>
+                        </h:commandLink>
+                </c:if>
+            </ul>
+            <ul id="btnConnexion" class="nav navbar-nav navbar-right row">
+                <c:if test="#{authentifier.utilisateur == ''}">
+                    <h:button value="Connexion" class="btn btn-primary col-sm-auto" 
+                        outcome="ident"/>
+                </c:if>
+                <c:if test="#{authentifier.utilisateur != ''}">
+                        <h:commandButton value="Déconnexion de #{authentifier.utilisateur}" 
+                            class="btn btn-primary col-sm-auto"
+                            action="#{pageController.Logout(authentifier)}"/>
+                </c:if>
+            </ul>
+        </nav>
+        </h:form>
+        <!-- Ouvrir ls photo dans une autre fenêtre -->
+        <script>
+            $(document).ready(function(){
+                //Afficher l'image (Grossir)
+                $("#ImagePrincipale").click(function() {
+                    window.open($("#ImagePrincipale img").attr('src'));
+                });
+            });
+        </script>
+        <br/>
+        <div id="ImageInfo" class="container-fluid align-items-center row">
+            <div class="col-12 text-center">
+                <h1 id="ImageTitre">
+                    #{bd.image.get("Titre")}
+                </h1>
+            </div>
+            <!-- Image précédente -->
+            <div id="ImagePrecedente" class="text-center col-3 col-sm-1">
+                <c:if test="#{bd.image.get('IDPrecedent') != '-1'}">
+                   <h:form>
+                        <h:commandButton image='resources/images/img/precedent.png' 
+                            action="#{bd.Demande('Precedent')}">
+                            <f:ajax render="@all"/>
+                        </h:commandButton>
+                    </h:form>
+                </c:if>
+            </div>
+            <!-- Image a voir -->
+            <div id="ImagePrincipale" class="text-center col-6 col-sm-10">
+                <c:if test="#{bd.image.get('ID') != '-1'}">
+                    <img src='resources/images/photos/#{bd.image.get("Fichier")}'
+                        width='80%' alt='Photo' id='img#{bd.image.get("ID")}' />
+                </c:if>
+            </div>
+            <!-- Image suivante-->
+            <div id="ImageSuivante" class="text-center col-3 col-sm-1">
+                <c:if test="#{bd.image.get('IDSuivant') != '-1'}">
+                    <h:form>
+                        <h:commandButton image='resources/images/img/suivant.png' 
+                            action="#{bd.Demande('Suivant')}">
+                            <f:ajax render="@all"/>
+                        </h:commandButton>
+                    </h:form>
+                </c:if>
+            </div>
+            <br/>
+            <article id="ImageDescription" class="col-12 text-center">
+                #{bd.image.get("Description")}
+            </article>
+        </div>
+        <br/><br/>
+        <h:form id="Comm">
+            <c:forEach var="item" items="#{bd.commentaires}">
+                <c:if test="#{item != null}">
+                    #{item}
+                    <br/>
+                </c:if>
+            </c:forEach>
+            <br/>
+            <c:if test="#{authentifier.utilisateur != ''}">
+                <h:inputText id="Texte" value="#{commentaires.commentaire}"/>
+                <h:commandButton value="Ajouter" id="btnAjouterComm"
+                    action="#{commentaires.AjouterCommentaire(bd.image.get('ID'), 
+                        authentifier.id_utilisateur)}">
+                    <f:ajax execute="Texte"/>
+                    <script>
+                        $(document).ready(function(){
+                            $("#Comm input:submit").click(function() {
+                                $("#Comm").html("Vous: " + $("form input:text").val() 
+                                    + "<br/>" + $("#Comm").html());
+                            });
+                        });
+                    </script>
+                </h:commandButton>
+            </c:if>
+        </h:form>
+        <br/><br/>
+    </h:body>
+</html>
